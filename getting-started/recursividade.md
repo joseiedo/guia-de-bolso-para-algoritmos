@@ -1,24 +1,17 @@
 # Recursividade
 
-Requisitos
-
-* Saber o que são funções, variáveis, loops
-* Saber o que é uma stack.
-
-
-
 ## O que é?
 
 Recursão é o momento em que uma função chama a si mesma.
 
 <figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption><p>catei desse site: <a href="http://geraldoferraz.blogspot.com/2011/11/recursividade.html">http://geraldoferraz.blogspot.com/2011/11/recursividade.html</a></p></figcaption></figure>
 
-Exemplos em java:
+Exemplo em java:
 
 ```java
 // Função que vai fazer uma contagem do número N até 0
 public void contagemRegressiva(int number){
-    if (number == 0) {
+    if (number < 0) {
         return;
     }
     System.out.println(number);
@@ -30,11 +23,36 @@ public void contagemRegressiva(int number){
 
 ## Estrutura de uma recursão (macetes)
 
-TODO
+Eu prefiro começar sempre com a condição pra essa recursão parar, o _base case._ acho bem mais fácil de entender.
+
+Um exemplo na prática é o [Leetcode 100. Same Tree](https://leetcode.com/problems/same-tree/)
+
+Nele precisamos comparar se duas árvores binárias são idênticas. Minha solução no fim foi essa:
+
+```java
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        // Se ambos os nós forem nulos, estamos no final da árvore, então são iguais. 
+        if (p == null && q == null){
+            return true;
+        }
+        // Se só um nó for nulo, as árvores são diferentes.
+        if (p == null || q == null){
+            return false;
+        }
+        // Se os valores de ambos os nós forem diferentes, a árvore é diferente.
+        if (p.val != q.val){
+            return false;
+        }
+
+        return this.isSameTree(p.left, q.left) && this.isSameTree(p.right, q.right);
+    }
+}
+```
 
 ## Quando que eu uso?
 
-Parecido com os loops, recursão vai ser usada pra resolver problemas sequenciais, como o fibonacci, fatoriais, algoritmos de busca em árvores, tbm no quicksort, divide and conquer...
+Parecido com os loops, recursão vai ser usada pra resolver problemas sequenciais, como o fibonacci, fatoriais, algoritmos de busca em árvores, ordenações, divide-and-conquer...
 
 
 
@@ -43,12 +61,12 @@ O problema é que tem um custo. E o pior, o custo só é descoberto de 2 formas:
 1. Tomando um erro na fuça sem saber o que fazer
 2. Ouvir de alguém que já tomou um erro na fuça sem saber o que fazer
 
-Vamos ver um exemplo de um cálculo de [fibonacci](https://brasilescola.uol.com.br/matematica/sequencia-fibonacci.htm) recursivo:
+Vamos ver um exemplo de um [fibonacci](https://brasilescola.uol.com.br/matematica/sequencia-fibonacci.htm) recursivo:
 
 ```java
-// Retornará o número x da sequência de fibonacci
+// Retornará o número na posição x da sequência de fibonacci
 public long fibonacci(int x) {
-  if (x == 0 || x == 1 ) {
+  if (x <= 1 ) {
     return x;
   }
 
@@ -56,7 +74,7 @@ public long fibonacci(int x) {
 }
 ```
 
-Se a gente chamar essa função  com `x = 2` retorna `1`, `x = 4` retorna `3`  e se `x = 6` retorna `8`
+Se a gente chamar essa função  com `x = 2` retorna `1`, `x = 4` retorna `3`  e  `x = 6` retorna `8`
 
 Mas e se eu exagerar e chamar enviando  10 milhões? A resposta é um erro esquisito pra quem nunca viu.
 
@@ -71,17 +89,15 @@ at org.example.Main.fibonacci(Main.java:9)
 at org.example.Main.fibonacci(Main.java:9)
 ```
 
-### O que tá acontecendo?
+### Por que minha recursão não funciona com muitas iterações?
 
 Toda vez que chamamos uma função ela é guardada numa stack e liberada quando ela retorna. Essa é a _Call Stack (_pilha de chamadas).&#x20;
 
-Daí você pode imaginar o que seria esse StackOverFlow, ele vai surgir quando a call stack estiver cheia. Você pode até aumentar o tamanho da stack pra seu código passar, mas não vai ser o suficiente
-
-Passo a passo:
+Daí você pode imaginar o que seria esse StackOverFlow, ele vai surgir quando a call stack estiver cheia, a cada iteração é mais um espaço ocupado na call stack. Você pode até aumentar o tamanho da stack pra seu código passar com algumas configurações mas é só uma solução temporária.
 
 ```java
 public static long fibonacci(int x) {
-  if (x == 0 || x == 1 ) {
+  if (x <= 1 ) {
     // 3) Somente nesse return que a função sai da callstack.
     return x;
   }
@@ -96,21 +112,40 @@ public static void main(String[] args){
 }
 ```
 
-Recomendo esse [link](https://developer.mozilla.org/pt-BR/docs/Glossary/Call\_stack) pra saber mais sobre o que é Call Stack.
+Recomendo esse [link](https://developer.mozilla.org/pt-BR/docs/Glossary/Call\_stack) pra saber mais sobre o que é a call stack.
+
+#### A Stacktrace
+
+```
+at org.example.Main.fibonacci(Main.java:9)
+at org.example.Main.fibonacci(Main.java:9)
+at org.example.Main.fibonacci(Main.java:9)
+at org.example.Main.fibonacci(Main.java:9)
+```
+
+\
+Toda vez que uma exceção é lançada, a jvm percorre a pilha de chamadas (call stack), rastreando as funções que foram chamadas até chegar à primeira delas. Então, cada uma dessas linhas indica que a exceção ocorreu na linha 9 do arquivo `Main.java.`
 
 
 
-E os `at org.example.Main.fibonacci(Main.java:9)` que apareceram no console?
+Se debugarmos pelo IntelliJ, podemos ver cada chamada na call stack.
 
-Toda vez que uma exception é lançada, nosso runtime puxa as funções que estavam na stack até chegar no primeiro item da callstack. No caso "Main.java:9" diz que foi na linha 9 do arquivo Main.java, onde na minha IDE é a exata linha em que acontece a recursão.
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
-Como resolver?
+Então, em resumo, o processo é:
+
+1. Função é chamada
+2. Ela é guardada na call stack
+3. Cada função que ela chama também é guardada na call stack
+4. Quando o que tiver lá dentro dela terminar (inclusive funções que ela chama) e ela der um return, sai da call stack.
+
+### Como contornar o StackOverFlow?
 
 Então, esse é o trade-off de uma função recursiva, se ela fizer muitas iterações a callstack pode estourar. É daí que a gente troca pra um loop e para de jogar chamadas na stack.
 
 ```java
-public static long fibonacciIterativo(int x){              
-   if (x == 0 || x == 1){                                
+public static long fibonacci(int x){              
+   if (x <= 1){                                
        return x;                                         
    }
 

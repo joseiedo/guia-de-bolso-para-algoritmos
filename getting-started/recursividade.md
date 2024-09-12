@@ -32,27 +32,31 @@ Nele precisamos comparar se duas árvores binárias são idênticas. Minha solu�
 ```java
 class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {
-        // Se ambos os nós forem nulos, estamos no final da árvore, então são iguais. 
+        // Base case 01: Se ambos os nós forem nulos, estamos no final da árvore, então são iguais. 
         if (p == null && q == null){
             return true;
         }
-        // Se só um nó for nulo, as árvores são diferentes.
+        // Base case 02: Se só um nó for nulo, as árvores são diferentes.
         if (p == null || q == null){
             return false;
         }
-        // Se os valores de ambos os nós forem diferentes, a árvore é diferente.
+        // Base case 03: Se os valores de ambos os nós forem diferentes, a árvore é diferente.
         if (p.val != q.val){
             return false;
         }
-
+        // Repete!
         return this.isSameTree(p.left, q.left) && this.isSameTree(p.right, q.right);
     }
 }
 ```
 
+{% hint style="info" %}
+Curiosidade: esse algoritmo que fiz com recursão se chama  Depth-First Search, ele percorre uma árvore toda fazendo uma busca em profundidade. Em breve faço um artigo com algoritmos de busca :)
+{% endhint %}
+
 ## Quando que eu uso?
 
-Parecido com os loops, recursão vai ser usada pra resolver problemas sequenciais, como o fibonacci, fatoriais, algoritmos de busca em árvores, ordenações, divide-and-conquer...
+Parecido com os loops, a recursão vai ser usada pra resolver problemas sequenciais como o fibonacci, fatoriais, algoritmos de busca em árvores, ordenações, algoritmos usando divide-and-conquer como quicksort...
 
 
 
@@ -74,7 +78,7 @@ public long fibonacci(int x) {
 }
 ```
 
-Se a gente chamar essa função  com `x = 2` retorna `1`, `x = 4` retorna `3`  e  `x = 6` retorna `8`
+Se a gente chamar essa função com `x = 2` retorna `1`, `x = 4` retorna `3`  e  `x = 6` retorna `8`
 
 Mas e se eu exagerar e chamar enviando  10 milhões? A resposta é um erro esquisito pra quem nunca viu.
 
@@ -91,9 +95,9 @@ at org.example.Main.fibonacci(Main.java:9)
 
 ### Por que minha recursão não funciona com muitas iterações?
 
-Toda vez que chamamos uma função ela é guardada numa stack e liberada quando ela retorna. Essa é a _Call Stack (_pilha de chamadas).&#x20;
+Toda vez que chamamos uma função, ela é guardada numa stack e liberada quando ela retorna. Essa é a _Call Stack (_pilha de chamadas).&#x20;
 
-Daí você pode imaginar o que seria esse StackOverFlow, ele vai surgir quando a call stack estiver cheia, a cada iteração é mais um espaço ocupado na call stack. Você pode até aumentar o tamanho da stack pra seu código passar com algumas configurações mas é só uma solução temporária.
+Daí você pode imaginar o que seria esse Stack Overflow, ele vai surgir quando a call stack estiver cheia, a cada iteração é mais um espaço ocupado na call stack. Você pode até aumentar o tamanho da stack para seu código passar com algumas configurações, mas é só uma solução temporária.
 
 ```java
 public static long fibonacci(int x) {
@@ -124,7 +128,7 @@ at org.example.Main.fibonacci(Main.java:9)
 ```
 
 \
-Toda vez que uma exceção é lançada, a jvm percorre a pilha de chamadas (call stack), rastreando as funções que foram chamadas até chegar à primeira delas. Então, cada uma dessas linhas indica que a exceção ocorreu na linha 9 do arquivo `Main.java.`
+Toda vez que uma exceção é lançada, a jvm percorre a pilha de chamadas (call stack), rastreando as funções chamadas até chegar à primeira delas. Então, cada uma dessas linhas indica que a exceção ocorreu na linha 9 do arquivo `Main.java.`
 
 
 
@@ -139,9 +143,9 @@ Então, em resumo, o processo é:
 3. Cada função que ela chama também é guardada na call stack
 4. Quando o que tiver lá dentro dela terminar (inclusive funções que ela chama) e ela der um return, sai da call stack.
 
-### Como contornar o StackOverFlow?
+### Como contornar o Stack Overflow?
 
-Então, esse é o trade-off de uma função recursiva, se ela fizer muitas iterações a callstack pode estourar. É daí que a gente troca pra um loop e para de jogar chamadas na stack.
+Então, esse é o trade-off de uma função recursiva, se ela fizer muitas iterações a callstack pode estourar. É daí que a gente troca para um loop e para de jogar chamadas na stack.
 
 ```java
 public static long fibonacci(int x){              

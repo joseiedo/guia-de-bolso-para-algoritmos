@@ -23,28 +23,66 @@ public void contagemRegressiva(int number){
 
 ## Estrutura de uma recursão (macetes)
 
-Eu prefiro começar sempre com a condição pra essa recursão parar, o _base case._ acho bem mais fácil de entender.
+Eu só fui entender recursão quando comecei a estudar algoritmos de busca em grafos e matrizes. Uma função recursiva é mais fácil de entender quando se inicia com o **caso base**. O caso base define quando a recursão deve parar, evitando que o programa entre em um loop infinito.&#x20;
 
-Um exemplo na prática é o [Leetcode 100. Same Tree](https://leetcode.com/problems/same-tree/)
+Um exemplo clássico é o problema do [Leetcode 100. Same Tree](https://leetcode.com/problems/same-tree/), onde precisamos verificar se duas árvores binárias são idênticas.\
 
-Nele precisamos comparar se duas árvores binárias são idênticas. Minha solução no fim foi essa:
+
+Em resumo, nosso passo a passo será:
+
+1. Percorrer pelos nós das duas árvores ao mesmo tempo
+2. Paramos de iterar os nós quando sabemos que as árvores são diferentes ou quando não temos mais nós para percorrer, sendo as duas árvores idênticas. (Casos base)
+
+Em um loop geralmente começamos pela parte de percorrer né? Mas eu proponho fazer diferente com recursão.\
+
+
+Vamos começar pela etapa 3. Quais nossos casos base?
+
+1. Ambos os nós serem nulos (Árvores iguais)
+2. Só um nó ser nulo (Árvores diferentes)
+3. Valores dos nós serem diferentes (Árvores diferentes)
 
 ```java
 class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {
-        // Base case 01: Se ambos os nós forem nulos, estamos no final da árvore, então são iguais. 
+        // Caso base 1: Se ambos os nós forem nulos, as árvores são idênticas até esse ponto.
         if (p == null && q == null){
             return true;
         }
-        // Base case 02: Se só um nó for nulo, as árvores são diferentes.
+        // Caso base 2: Se apenas um dos nós for nulo, as árvores são diferentes.
         if (p == null || q == null){
             return false;
         }
-        // Base case 03: Se os valores de ambos os nós forem diferentes, a árvore é diferente.
+        // Caso base 3: Se os valores dos nós forem diferentes, as árvores são diferentes.
         if (p.val != q.val){
             return false;
         }
-        // Repete!
+    }
+}
+```
+
+Aqui eu poderia fazer de várias formas, reduzir um if aqui e ali, mas escolhi deixar assim para ficar fácil de entender.
+
+
+
+Minha solução foi essa:
+
+```java
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        // Caso base 1: Se ambos os nós forem nulos, as árvores são idênticas até esse ponto.
+        if (p == null && q == null){
+            return true;
+        }
+        // Caso base 2: Se apenas um dos nós for nulo, as árvores são diferentes.
+        if (p == null || q == null){
+            return false;
+        }
+        // Caso base 3: Se os valores dos nós forem diferentes, as árvores são diferentes.
+        if (p.val != q.val){
+            return false;
+        }
+        // Recursão: Verifica os nós da esquerda e da direita.
         return this.isSameTree(p.left, q.left) && this.isSameTree(p.right, q.right);
     }
 }
@@ -166,3 +204,14 @@ public static long fibonacci(int x){
 // Pode testar que pelo menos com x = 10 milhões isso roda                                       
 ```
 
+Também podemos aplicar o pattern [Trampolim](https://java-design-patterns.com/patterns/trampoline/) (não irei abordar completamente, mas ele existe xD)
+
+```java
+public static Trampoline<BigInteger> fibonacci(BigInteger a, BigInteger b, int n) {
+    if (n == 0) {
+        return Trampoline.done(a);
+    } else {
+        return Trampoline.more(() -> fibonacci(b, a.add(b), n - 1));
+    }
+}
+```
